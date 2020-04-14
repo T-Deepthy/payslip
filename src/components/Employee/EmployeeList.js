@@ -27,12 +27,9 @@ class EmployeeList extends Component {
   componentDidMount() {
     this.props.getDesignations();
     this.props.getEmployees();
-    console.log("p......", this.props)
   }
 
   toggleEmployeeForm = (show) => {
-    console.log(show);
-
     this.setState({
       showEmployeeForm: show
     })
@@ -53,14 +50,8 @@ class EmployeeList extends Component {
       <tr key={item._id}>
         <td>{item.empNo}</td>
         <td>{item.address}</td>
-        {/* <td>{item["designation"].name}</td> */}
-        {/* {this.props.designations.data.map(des => (
-          (des._id === item.designation) ?
-            <td >{des.name}</td> :
-            ''
-        ))} */}
+        <td>{item.designation.name}</td>
         <td>{item.CTC}</td>
-
         <td>
           <Button
             onClick={this.setCurrentEmployee.bind(this, item)}
