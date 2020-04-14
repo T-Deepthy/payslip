@@ -13,6 +13,7 @@
     "history": "^4.7.2",
     "jquery": "^3.3.1",
     "moment": "^2.24.0",
+    "nodemon": "^2.0.3",
     "path": "^0.12.7",
     "react": "^16.13.1",
     "react-beautiful-dnd": "^11.0.5",
@@ -34,10 +35,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "engine": {
-    "node": "13.7.0",
-    "npm": "6.13.6"
   },
   "eslintConfig": {
     "extends": "react-app"
