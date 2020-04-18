@@ -5,7 +5,6 @@ import { createEmployee, editEmployee } from '../../actions/employee';
 
 class EmployeeForm extends React.Component {
   constructor(props) {
-    console.log(props);
     
     super(props);
     this.state = {
@@ -16,7 +15,8 @@ class EmployeeForm extends React.Component {
       CTC: '',
     };
   }
-  handleInputChange = e => {
+
+  handleInputChange   = e => {
     this.setState({
       [e.target.name]: e.target.value
     });
@@ -33,7 +33,7 @@ class EmployeeForm extends React.Component {
   }
 
   componentWillReceiveProps(props) {
-    this.setState({ ...props.employee });
+    this.setState({ ...props.employee, designation: props.employee.designation._id });
     console.log("porpssssssssssss..", this.props)
   }
 
@@ -59,10 +59,10 @@ class EmployeeForm extends React.Component {
               <Form.Control onChange={this.handleInputChange} name="empNo" type="text" value={emp.empNo} placeholder="Enter employee number" />
               <Form.Label>Address</Form.Label>
               <Form.Control onChange={this.handleInputChange} name="address" type="text" value={emp.address} placeholder="Enter employee address" />
-                  <Form.Row key={this.props.employee.designation._id}>
+              <Form.Row key={this.props.employee.designation._id}>
                     <Form.Group as={Col} controlId="exampleForm.SelectCustom">
                       <Form.Label>Designation</Form.Label>
-                      <Form.Control onChange={this.handleInputChange} name="designation" as="select" value={this.props.employee.designation._id}>
+                      <Form.Control onChange={this.handleInputChange} name="designation" as="select" value={this.state.designation}>
                         <option key={-1} value={''}>Choose Designation</option>
                         {this.props.designations.data.map((c, i) => {
                           return (<option key={c._id} value={c._id}>{c.name}</option>)
