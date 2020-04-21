@@ -9,9 +9,7 @@ class Home extends Component {
 
   render() {
     return (
-      <React.Fragment>
-        {''}
-      </React.Fragment>
+       <p>welcome!</p>
     );
   }
 }

@@ -54,11 +54,14 @@ class EmployeeList extends Component {
         <td>{item.CTC}</td>
         <td>
           <Button
+            className="mr-2" 
             onClick={this.setCurrentEmployee.bind(this, item)}
           >Edit</Button>
           <Button
+            variant="danger" className="mr-2"
             onClick={this.props.deleteEmployee.bind(this, item)}
           >Delete</Button>
+          <Button variant="secondary" >Generate PDF</Button>
         </td>
       </tr>
     ));
@@ -72,7 +75,8 @@ class EmployeeList extends Component {
     } else {
       return (
         <div>
-          <Button onClick={this.setCurrentEmployee.bind(this, initialState)}>Add</Button>
+          <Button variant="success" className="mb-2"
+            onClick={this.setCurrentEmployee.bind(this, initialState)}>Add</Button>
           <table className="table">
             <thead>
               <tr>

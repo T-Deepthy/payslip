@@ -43,8 +43,10 @@ class SalaryComponentList extends Component {
           <input type="checkbox" disabled defaultChecked={item.status} />
         </td>
         <td>
-          <Button onClick={this.setCurrentSalaryComponent.bind(this, item)}>Edit</Button>
-          <Button onClick={this.props.deleteSalaryComponent.bind(this, item)}>Delete</Button>
+          <Button className="mr-2" onClick={this.setCurrentSalaryComponent.bind(this, item)}>Edit</Button>
+          <Button
+            variant="danger"
+            onClick={this.props.deleteSalaryComponent.bind(this, item)}>Delete</Button>
         </td>
       </tr>
     ));
@@ -64,7 +66,8 @@ class SalaryComponentList extends Component {
     } else {
       return (
         <div>
-          <Button onClick={this.setCurrentSalaryComponent.bind(this, initialState)}>Add</Button>
+          <Button className="mb-2" variant="success"
+            onClick={this.setCurrentSalaryComponent.bind(this, initialState)}>Add</Button>
           <table className="table">
             <thead>
               <tr>
@@ -92,7 +95,7 @@ const mapStateToProps = (store) => {
 
 export default connect(
   mapStateToProps, {
-    getSalaryComponents,
-    deleteSalaryComponent,
-  }
+  getSalaryComponents,
+  deleteSalaryComponent,
+}
 )(SalaryComponentList);

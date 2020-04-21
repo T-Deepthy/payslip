@@ -55,9 +55,11 @@ class DesignationList extends Component {
         </td>
         <td>
           <Button
+            className="mr-2"
             onClick={this.setCurrentDesignation.bind(this, item)}
           >Edit</Button>
           <Button
+            variant="danger"
             onClick={this.props.deleteDesignation.bind(this, item)}
           >Delete</Button>
         </td>
@@ -79,7 +81,8 @@ class DesignationList extends Component {
     } else {
       return (
         <div>
-          <Button onClick={this.setCurrentDesignation.bind(this, initialState)}>Add</Button>
+          <Button className="mb-2" variant="success"
+            onClick={this.setCurrentDesignation.bind(this, initialState)}>Add</Button>
           <table className="table">
             <thead>
               <tr>
