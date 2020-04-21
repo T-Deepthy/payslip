@@ -109,11 +109,11 @@ class DesignationForm extends React.Component {
                       "height": "30px",
                       "marginTop": "12px",
                       "alignSelf": "center"
-                    }} size="sm" variant="outline-danger">Remove</Button>{' '}
+                    }} size="sm" variant="danger">Remove</Button>{' '}
                   </Form.Row>
                 )
               })}
-              <Button onClick={this.addComponent}>Add Salary Component</Button>
+              <Button size="sm" variant="success" onClick={this.addComponent}>Add Salary Component</Button>
             </Form.Group>
           </Form>
         </Modal.Body>
