@@ -58,10 +58,10 @@ class EmployeeList extends Component {
             onClick={this.setCurrentEmployee.bind(this, item)}
           >Edit</Button>
           <Button
-            variant="danger" className="mr-2"
+            variant="danger" className="mr-2 pull-right"
             onClick={this.props.deleteEmployee.bind(this, item)}
           >Delete</Button>
-          <Button variant="secondary" >Generate PDF</Button>
+          <Button className="float-right" variant="secondary" >Generate PDF</Button>
         </td>
       </tr>
     ));
