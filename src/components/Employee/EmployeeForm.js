@@ -9,6 +9,7 @@ class EmployeeForm extends React.Component {
     super(props);
     this.state = {
       _id: '',
+      empName:'',
       empNo: '',
       address: '',
       designation: '',
@@ -57,6 +58,8 @@ class EmployeeForm extends React.Component {
             <Form.Group controlId="name">
               <Form.Label>Employee number</Form.Label>
               <Form.Control onChange={this.handleInputChange} name="empNo" type="text" value={emp.empNo} placeholder="Enter employee number" />
+              <Form.Label>Employee name</Form.Label>
+              <Form.Control onChange={this.handleInputChange} name="empName" type="text" value={emp.empName} placeholder="Enter employee name" />
               <Form.Label>Address</Form.Label>
               <Form.Control onChange={this.handleInputChange} name="address" type="text" value={emp.address} placeholder="Enter employee address" />
               <Form.Row key={this.props.employee.designation._id}>
