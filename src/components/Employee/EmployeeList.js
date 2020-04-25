@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { getEmployees, deleteEmployee } from "../../actions/employee";
 import { getDesignations } from "../../actions/designation";
 import Axios from "axios";
-import { PdfDocument } from "./PdfDocument";
+import { PayslipPDF } from "./PayslipPDF";
 import { API } from "../../actions/config"
 import { PDFDownloadLink } from "@react-pdf/renderer";
 
@@ -86,7 +86,7 @@ class EmployeeList extends Component {
           >Generate Payslip</Button>
           {this.state.payslip[index] ?
             <PDFDownloadLink
-              document={<PdfDocument data={this.state.payslip[index]} />}
+              document={<PayslipPDF data={this.state.payslip[index]} />}
               fileName="payslip.pdf"
               style={{
                 textDecoration: "none",
