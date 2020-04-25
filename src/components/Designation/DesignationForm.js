@@ -13,7 +13,7 @@ class DesignationForm extends React.Component {
       components: [
         {
           _id: '',
-          percentageCTC: '',
+          percentageCTC: null,
         }
       ],
     };
@@ -28,16 +28,40 @@ class DesignationForm extends React.Component {
       [e.target.name]: e.target.value
     });
   };
+
+  duplicateComponents = (components) => new Set(components.map(c => c._id)).size !== components.length;
+
+  validSalaryComponents = (components) => {
+    let totalPercentage = components.reduce(
+      (accumulator, currentValue) => accumulator + parseInt(currentValue.percentageCTC), 0)
+    if (totalPercentage !== 100) {
+      alert("Total Value of Percentage should be equal to 100")
+      return false;
+    }
+    if (this.duplicateComponents(components)) {
+      alert("There are duplicate salary components")
+      return false;
+    }
+    return true;
+  }
   save = () => {
     const designation = this.state;
-    if (designation._id) {
-      this.props.editDesignation(designation);
-    } else {
-      const { _id, ...rest } = designation;
-      this.props.createDesignation(rest);
+    if(!designation.name) {
+      alert("blank");
+      return;
     }
-    this.props.onHide();
+
+    if (this.validSalaryComponents(designation.components)) {
+      if (designation._id) {
+        this.props.editDesignation(designation);
+      } else {
+        const { _id, ...rest } = designation;
+        this.props.createDesignation(rest);
+      }
+      this.props.onHide();
+    }
   }
+
 
   removeComponent = (i) => {
     const components = this.state.components;
@@ -65,6 +89,7 @@ class DesignationForm extends React.Component {
 
   componentWillReceiveProps(props) {
     this.setState({ ...props.designation });
+    console.log("state")
   }
 
   render() {
