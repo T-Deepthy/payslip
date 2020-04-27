@@ -16,6 +16,9 @@ class DesignationForm extends React.Component {
           percentageCTC: null,
         }
       ],
+      formValid: false,
+      formErrors: { name: '' },
+      nameValid: false
     };
   }
 
@@ -24,11 +27,53 @@ class DesignationForm extends React.Component {
   }
 
   handleInputChange = e => {
-    this.setState({
-      [e.target.name]: e.target.value
+    const name = e.target.name;
+    const value = e.target.value;
+    this.setState({ [name]: value }, () => {
+      this.validateField(name, value);
     });
   };
-
+  handleUserInput = e => {
+    const name = e.target.name;
+    const value = e.target.value;
+    this.setState({ [name]: value }, () => {
+      this.validateField(name, value);
+    });
+  };
+  validateField(fieldName, value) {
+    let fieldValidationErrors = this.state.formErrors;
+    let nameValid = this.state.nameValid;
+    switch (fieldName) {
+      case "name":
+        nameValid = value.length > 0;
+        fieldValidationErrors.name = nameValid
+          ? ""
+          : " Designaton can't be empty";
+        nameValid = value.match(/^[a-zA-Z]+$/);
+        fieldValidationErrors.name = nameValid
+          ? ""
+          : " Designation must be alphabet";
+        break;
+      default:
+        break;
+    }
+    this.setState(
+      {
+        formErrors: fieldValidationErrors,
+        nameValid: nameValid,
+      },
+      this.validateForm
+    );
+  }
+  validateForm() {
+    this.setState({
+      formValid:
+        this.state.nameValid
+    });
+  }
+  errorClass(error) {
+    return error.length === 0 ? "" : "has-error";
+  }
   duplicateComponents = (components) => new Set(components.map(c => c._id)).size !== components.length;
 
   validSalaryComponents = (components) => {
@@ -46,8 +91,7 @@ class DesignationForm extends React.Component {
   }
   save = () => {
     const designation = this.state;
-    if(!designation.name) {
-      alert("blank");
+    if (!this.nameValid) {
       return;
     }
 
@@ -111,14 +155,24 @@ class DesignationForm extends React.Component {
         <Modal.Body>
           <Form>
             <Form.Group controlId="name">
-              <Form.Label>Designation</Form.Label>
-              <Form.Control onChange={this.handleInputChange} name="name" type="text" value={des.name} placeholder="Enter designation " />
+              <div
+                className={`form-group ${this.errorClass(
+                  this.state.formErrors.name
+                )}`}
+              >
+                <Form.Label>Designation</Form.Label>
+                <Form.Control onChange={this.handleInputChange} name="name" type="text" value={des.name}
+                  placeholder="Enter designation " />
+              </div>
+              <p style={{ color: "red" }}> {this.state.formErrors.name} </p>
+
               {des.components.map((component, index) => {
                 return (
                   <Form.Row key={`${component._id}-${index}`}>
                     <Form.Group as={Col} controlId="exampleForm.SelectCustom">
                       <Form.Label>Salary Component</Form.Label>
-                      <Form.Control onChange={this.handleComponentChange.bind(this, index)} name="_id" as="select" value={component._id}>
+                      <Form.Control onChange={this.handleComponentChange.bind(this, index)}
+                        name="_id" as="select" value={component._id}>
                         <option key={-1} value={''}>Choose Component</option>
                         {salaryComponents.data.map((c, i) => {
                           return (<option key={c._id} value={c._id}>{c.name}</option>)
