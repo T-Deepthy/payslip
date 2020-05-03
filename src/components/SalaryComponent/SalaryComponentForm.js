@@ -2,14 +2,6 @@ import React from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { connect } from "react-redux";
 import { createSalaryComponent, editSalaryComponent } from '../../actions/salaryComponent';
-// import * as yup from 'yup';
-// import { Formik } from 'formik';
-
-// const schema = yup.object({
-//   name: yup.string().matches(/^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$/, 'Alphabets are allowed')
-//   .required('Salary Component is required'),
-//   status: yup.string().required('Required ')
-// });
 class SalaryComponentForm extends React.Component {
   constructor(props) {
     super(props);

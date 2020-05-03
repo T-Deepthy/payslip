@@ -57,7 +57,7 @@ class DesignationForm extends React.Component {
           nameValid = value.match(/^([a-zA-Z]+\s)*[a-zA-Z]+$/);
           fieldValidationErrors.name = nameValid
             ? ""
-            : " Salary Component Name must be alphabet";
+            : "Designation must be alphabet";
         }
         break;
       default:
@@ -77,18 +77,30 @@ class DesignationForm extends React.Component {
   duplicateComponents = (components) => new Set(components.map(c => c._id)).size !== components.length;
 
   validSalaryComponents = (components) => {
+    let fieldValidationErrors = this.state.formErrors;
+    let percentageCTCValid = this.state.percentageCTCValid;
+    let salaryComponentsValid = this.state.salaryComponentsValid;
+
     let totalPercentage = components.reduce(
       (accumulator, currentValue) => accumulator + parseInt(currentValue.percentageCTC), 0)
     if (totalPercentage !== 100) {
-      alert("Total Value of Percentage should be equal to 100")
+      fieldValidationErrors.percentageCTC = "Total Value of Percentage should be equal to 100"
+      console.log(fieldValidationErrors.percentageCTC )
       return false;
     }
     if (this.duplicateComponents(components)) {
-      alert("There are duplicate salary components")
-      //choose salary component conddition is not given
+      fieldValidationErrors.salaryComponents = "There are duplicate salary components"
       return false;
     }
-    return true;
+    this.setState(
+      {
+        formErrors: fieldValidationErrors,
+        percentageCTCValid: percentageCTCValid,
+        salaryComponentsValid: salaryComponentsValid,
+      },
+      this.validateForm
+    );
+    
   }
   save = () => {
     const designation = this.state;
@@ -168,7 +180,7 @@ class DesignationForm extends React.Component {
               </Form.Group>
               </div>
             <p style={{ color: "red" }}> {this.state.formErrors.name} </p>
-
+           
               {des.components.map((component, index) => {
                 return (
                   <Form.Row key={`${component._id}-${index}`}>
