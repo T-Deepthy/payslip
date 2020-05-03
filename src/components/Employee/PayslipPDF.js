@@ -44,13 +44,6 @@ const styles = StyleSheet.create({
     padding: 16,
     fontSize: 14
   },
-header: {
-  backgroundColor: "#f6f6f5",
-  display: "flex",
-  flexDirection: "row",
-  padding: 5
-},
-
   respTable: {
     width: "100%",
     display: "table"
@@ -112,13 +105,8 @@ export function PayslipPDF(props) {
       <Page size="A4" style={styles.page}>
         {props.data ?
           <View style={{ background: 'red' }}>
-            <Text style={styles.head}>Company Name</Text>
-            <Text style={styles.head}>Address</Text>
-            <Text style={styles.head}>Phone</Text>
-            <Text style={styles.head}>Fax</Text>
-            <Text style={styles.head}>Email</Text>
-
             <Text style={styles.head}>Payslip</Text>
+            <Text style={styles.date}>Date: {`${year}${'-'}${month < 10 ? `0${month}` : `${month}`}${'-'}${date}`}</Text>
             <Text style={styles.employeeDetails}>Employee Details</Text>
             <Text style={styles.text}>Employee Name: {props.data.empName}</Text>
             <Text style={styles.text}>Employee Number: {props.data.empNo}</Text>
@@ -129,8 +117,6 @@ export function PayslipPDF(props) {
             <Text style={styles.ctc}>CTC</Text>
             <Text style={styles.text}>Mothly CTC: {props.data.CTC}/-</Text>
             <Text style={styles.text}>Yearly CTC: {props.data.CTC * 12}/-</Text>
-            <Text style={styles.date}>Date: {`${year}${'-'}${month < 10 ? `0${month}` : `${month}`}${'-'}${date}`}</Text>
-            <Text>Signature</Text>
           </View>
           : null}
       </Page>
