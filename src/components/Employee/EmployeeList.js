@@ -8,7 +8,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 
 import { connect } from "react-redux";
 import { Spin } from "antd";
-import { Button } from "react-bootstrap"
+import { Button, Modal } from "react-bootstrap"
 import EmployeeForm from "./EmployeeForm";
 const initialState = {
   _id: '',
@@ -24,6 +24,7 @@ class EmployeeList extends Component {
     super(props);
     this.state = {
       showEmployeeForm: false,
+      isDeleteModalOpen: false,
       currentEmployee: initialState,
       payslip: []
     };
@@ -49,15 +50,30 @@ class EmployeeList extends Component {
     })
   }
 
-  deleteEmployee = (employee) => {
-    this.props.deleteEmployee(employee);
+  // deleteEmployee = (employee) => {
+  //   this.props.deleteEmployee(employee);
+  // }
+  deleteEmployee = () => {
+    const {currentEmployee} = this.state;
+    this.props.deleteEmployee(currentEmployee);
+    this.closeDeleteDialog();
+  }
+
+  openDeleteDialog = (currentEmployee) => {
+    this.setState({
+      currentEmployee,
+      isDeleteModalOpen: true
+    })
+  }
+
+  closeDeleteDialog = () => {
+    this.setState({isDeleteModalOpen: false});
   }
 
   generatePDF = async (employee, index) => {
     const employeePayslip = await Axios.get(`${API}employees/${employee._id}/payslip`)
     const { payslip } = this.state;
     payslip[index] = employeePayslip.data;
-
     this.setState({
       payslip
     })
@@ -78,7 +94,7 @@ class EmployeeList extends Component {
           >Edit</Button>
           <Button
             variant="danger" className="mr-2 pull-right"
-            onClick={this.props.deleteEmployee.bind(this, item)}
+            onClick={() => this.openDeleteDialog(item)}
           >Delete</Button>
           <Button
             variant="secondary" className="mr-2 pull-right"
@@ -110,6 +126,7 @@ class EmployeeList extends Component {
         <Spin />
       );
     } else {
+      const {isDeleteModalOpen} = this.state;
       return (
         <div>
           <Button variant="success" className="mb-2"
@@ -131,6 +148,20 @@ class EmployeeList extends Component {
             <EmployeeForm show={this.state.showEmployeeForm}
               onHide={this.hideForm} employee={this.state.currentEmployee} />
           </table>
+          <Modal show={isDeleteModalOpen} size="md">
+            <Modal.Header>
+              <Modal.Title>
+                Delete employee
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Are you sure?
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="danger" onClick={() => this.deleteEmployee()}>Delete</Button>
+              <Button onClick={() => this.closeDeleteDialog()}>Close</Button>
+            </Modal.Footer>
+          </Modal>
         </div>)
     };
   }
