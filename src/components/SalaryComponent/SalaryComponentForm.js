@@ -2,7 +2,14 @@ import React from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { connect } from "react-redux";
 import { createSalaryComponent, editSalaryComponent } from '../../actions/salaryComponent';
+// import * as yup from 'yup';
+// import { Formik } from 'formik';
 
+// const schema = yup.object({
+//   name: yup.string().matches(/^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$/, 'Alphabets are allowed')
+//   .required('Salary Component is required'),
+//   status: yup.string().required('Required ')
+// });
 class SalaryComponentForm extends React.Component {
   constructor(props) {
     super(props);
@@ -10,25 +17,68 @@ class SalaryComponentForm extends React.Component {
       _id: '',
       name: '',
       status: false,
+      formErrors: { name: "" },
+      nameValid: false,
+      formValid: false
     };
   }
   handleInputChange = e => {
-    this.setState({
-      [e.target.name]: e.target.hasOwnProperty("checked") ?
-        e.target.checked.toString() : e.target.value
+    const name = e.target.name;
+    const checked = e.target.checked;
+    const value = e.target.hasOwnProperty("checked") ?
+      checked : e.target.value
+    this.setState({ [name]: value }, () => {
+      this.validateField(name, value);
     });
   };
+  validateForm() {
+    this.setState({
+      formValid:
+        this.state.nameValid
+    });
+  }
+  validateField(fieldName, value) {
+    let fieldValidationErrors = this.state.formErrors;
+    let nameValid = this.state.nameValid;
+    switch (fieldName) {
+      case "name":
+        if (!value) {
+          fieldValidationErrors.name = "Cannot be empty";
+        }
+
+        else {
+          nameValid = value.match(/^([a-zA-Z]+\s)*[a-zA-Z]+$/);
+          fieldValidationErrors.name = nameValid
+            ? ""
+            : " Salary Component Name must be alphabet";
+        }
+        break;
+      default:
+        break;
+    }
+    this.setState(
+      {
+        formErrors: fieldValidationErrors,
+        nameValid: nameValid
+      },
+      this.validateForm
+    );
+  }
+  errorClass(error) {
+    return error.length === 0 ? "" : "has-error";
+  }
   save = () => {
     const component = this.state;
-    if (component._id) {
-      this.props.editSalaryComponent(component);
-    } else {
-      const { _id, ...rest } = component;
-      this.props.createSalaryComponent(rest);
+    if (this.state.formValid) {
+      if (component._id) {
+        this.props.editSalaryComponent(component);
+      } else {
+        const { _id, ...rest } = component;
+        this.props.createSalaryComponent(rest);
+      }
+      this.props.onHide();
     }
-    this.props.onHide();
   }
-
   componentWillReceiveProps(props) {
     this.setState({ ...props.salaryComponent });
   }
@@ -50,15 +100,22 @@ class SalaryComponentForm extends React.Component {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group controlId="name">
-              <Form.Label>Component Name</Form.Label>
-              <Form.Control onChange={this.handleInputChange} name="name" type="text" value={component.name} placeholder="Enter component name" />
-            </Form.Group>
+            <div
+              className={`form-group ${this.errorClass(
+                this.state.formErrors.name
+              )}`}
+            >
+              <Form.Group controlId="name">
+                <Form.Label>Component Name</Form.Label>
+                <Form.Control onChange={this.handleInputChange} name="name" type="text" value={component.name} placeholder="Enter component name" />
+              </Form.Group>
+            </div>
+            <p style={{ color: "red" }}> {this.state.formErrors.name} </p>
             <Form.Group controlId="status">
               <Form.Check onChange={this.handleInputChange} name="status" type="checkbox" checked={component.status} label="Status" />
             </Form.Group>
-          </Form>
 
+          </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.save}>{salaryComponent._id ? 'Update' : 'Create'}</Button>

@@ -1,3 +1,3 @@
 module.exports = {
-	API: 'https://tdeepthy-salary-slip.herokuapp.com/',
+	API: 'http://localhost:8080/',
 }

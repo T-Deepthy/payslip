@@ -34,7 +34,7 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         error: action.error,
       }
-
+      
     case types.SALARY_COMPONENT_EDIT_SUCCESS:
       return {
         ...state,
