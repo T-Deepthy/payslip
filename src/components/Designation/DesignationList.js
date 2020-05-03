@@ -4,7 +4,7 @@ import { getSalaryComponents } from "../../actions/salaryComponent";
 
 import { connect } from "react-redux";
 import { Spin } from "antd";
-import { Button } from "react-bootstrap"
+import { Button, Modal } from "react-bootstrap"
 import DesignationForm from "./DesignationForm";
 const initialState = {
   _id: '',
@@ -14,14 +14,15 @@ const initialState = {
       _id: '',
       percentageCTC: ''
     }
-  ]
+  ],
 }
 class DesignationList extends Component {
-
+  
   constructor(props) {
     super(props);
     this.state = {
       showDesignationForm: false,
+      isDeleteModalOpen: false,
       currentDesignation: initialState
     };
     this.showForm = this.toggleDesignationForm.bind(this, true);
@@ -38,8 +39,21 @@ class DesignationList extends Component {
     })
   }
 
-  deleteDesignation = (component) => {
-    this.props.deleteDesignation(component);
+  deleteDesignation = () => {
+    const {currentDesignation} = this.state;
+    this.props.deleteDesignation(currentDesignation);
+    this.closeDeleteDialog();
+  }
+
+  openDeleteDialog = (currentDesignation) => {
+    this.setState({
+      currentDesignation,
+      isDeleteModalOpen: true
+    })
+  }
+
+  closeDeleteDialog = () => {
+    this.setState({isDeleteModalOpen: false});
   }
 
   showValues() {
@@ -60,7 +74,7 @@ class DesignationList extends Component {
           >Edit</Button>
           <Button
             variant="danger"
-            onClick={this.props.deleteDesignation.bind(this, item)}
+            onClick={() => this.openDeleteDialog(item)}
           >Delete</Button>
         </td>
       </tr>
@@ -79,6 +93,7 @@ class DesignationList extends Component {
         <Spin />
       );
     } else {
+      const {isDeleteModalOpen} = this.state;
       return (
         <div>
           <Button className="mb-2" variant="success"
@@ -97,6 +112,20 @@ class DesignationList extends Component {
             <DesignationForm show={this.state.showDesignationForm}
               onHide={this.hideForm} designation={this.state.currentDesignation} />
           </table>
+          <Modal show={isDeleteModalOpen} size="md">
+            <Modal.Header>
+              <Modal.Title>
+                Delete Designation
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Are you sure?
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="danger" onClick={() => this.deleteDesignation()}>Delete</Button>
+              <Button onClick={() => this.closeDeleteDialog()}>Close</Button>
+            </Modal.Footer>
+          </Modal>
         </div>)
     };
   }
