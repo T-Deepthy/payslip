@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { getSalaryComponents, deleteSalaryComponent } from "../../actions/salaryComponent";
 import { connect } from "react-redux";
 import { Spin } from "antd";
-import { Button } from "react-bootstrap"
+import { Button , Modal } from "react-bootstrap"
 import SalaryComponentForm from "./SalaryComponentForm"
 
 const initialState = {
@@ -16,6 +16,7 @@ class SalaryComponentList extends Component {
     super(props);
     this.state = {
       showSalaryComponentForm: false,
+      isDeleteModalOpen: false,
       currentSalaryComponent: initialState
     };
     this.showForm = this.toggleSalaryComponentForm.bind(this, true);
@@ -31,10 +32,22 @@ class SalaryComponentList extends Component {
     })
   }
 
-  deleteSalaryComponent = (component) => {
-    this.props.deleteSalaryComponent(component);
+  deleteSalaryComponent = () => {
+    const {currentSalaryComponent} = this.state;
+    this.props.deleteSalaryComponent(currentSalaryComponent);
+    this.closeDeleteDialog();
   }
 
+  openDeleteDialog = (currentSalaryComponent) => {
+    this.setState({
+      currentSalaryComponent,
+      isDeleteModalOpen: true
+    })
+  }
+
+  closeDeleteDialog = () => {
+    this.setState({isDeleteModalOpen: false});
+  }
   showValues() {
     return this.props.salaryComponents.data.map((item, index) => (
       <tr key={item._id}>
@@ -46,7 +59,7 @@ class SalaryComponentList extends Component {
           <Button className="mr-2" onClick={this.setCurrentSalaryComponent.bind(this, item)}>Edit</Button>
           <Button
             variant="danger"
-            onClick={this.props.deleteSalaryComponent.bind(this, item)}>Delete</Button>
+            onClick={() => this.openDeleteDialog(item)}>Delete</Button>
         </td>
       </tr>
     ));
@@ -64,6 +77,7 @@ class SalaryComponentList extends Component {
         <Spin />
       );
     } else {
+      const {isDeleteModalOpen} = this.state;
       return (
         <div>
           <Button className="mb-2" variant="success"
@@ -82,6 +96,20 @@ class SalaryComponentList extends Component {
             <SalaryComponentForm show={this.state.showSalaryComponentForm}
               onHide={this.hideForm} salaryComponent={this.state.currentSalaryComponent} />
           </table>
+          <Modal show={isDeleteModalOpen} size="md">
+            <Modal.Header>
+              <Modal.Title>
+                Delete salary component
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Are you sure?
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="danger" onClick={() => this.deleteSalaryComponent()}>Delete</Button>
+              <Button onClick={() => this.closeDeleteDialog()}>Close</Button>
+            </Modal.Footer>
+          </Modal>
         </div>)
     };
   }

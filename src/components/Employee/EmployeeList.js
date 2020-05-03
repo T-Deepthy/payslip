@@ -49,10 +49,6 @@ class EmployeeList extends Component {
       this.showForm();
     })
   }
-
-  // deleteEmployee = (employee) => {
-  //   this.props.deleteEmployee(employee);
-  // }
   deleteEmployee = () => {
     const {currentEmployee} = this.state;
     this.props.deleteEmployee(currentEmployee);
