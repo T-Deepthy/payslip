@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form, Modal, Col } from 'react-bootstrap';
+import { Button, Form, Modal, Col, Alert } from 'react-bootstrap';
 import { connect } from "react-redux";
 import { getSalaryComponents } from "../../actions/salaryComponent";
 import { createDesignation, editDesignation } from '../../actions/designation';
@@ -20,7 +20,8 @@ class DesignationForm extends React.Component {
       nameValid: false,
       salaryComponentsValid: false,
       percentageCTCValid: false,
-      formValid: false
+      formValid: false,
+      errorMessage: new Set()
     };
   }
 
@@ -38,9 +39,8 @@ class DesignationForm extends React.Component {
   validateForm() {
     this.setState({
       formValid:
-        this.state.nameValid &&
-        this.state.salaryComponentsValid &&
-        this.state.percentageCTCValid 
+        this.state.nameValid 
+        
     });
   }
 
@@ -78,17 +78,37 @@ class DesignationForm extends React.Component {
 
   validSalaryComponents = (components) => {
     let totalPercentage = components.reduce(
-      (accumulator, currentValue) => accumulator + parseInt(currentValue.percentageCTC), 0)
-    if (totalPercentage !== 100) {
-      alert("Total Value of Percentage should be equal to 100")
+      (accumulator, currentValue) => accumulator + +(currentValue?.percentageCTC), 0)
+    const { errorMessage } = this.state;
+    const percentageError = "Total Value of Percentage should be equal to 100";
+    const duplicateError = "There are duplicate salary components";
+    const isHundredPercent = +totalPercentage === 100;
+    const isDuplicateSalaryComponent = this.duplicateComponents(components)
+    const emptyFields = components.some(c => !c._id || !c.percentageCTC);
+    const emptyFieldError = "There are empty fields";
+    if (!isHundredPercent || isDuplicateSalaryComponent || emptyFields) {
+      if (isHundredPercent) errorMessage.has(percentageError) && errorMessage.delete(percentageError)
+      else errorMessage.add(percentageError);
+      if (isDuplicateSalaryComponent) errorMessage.add(duplicateError)
+      else errorMessage.has(duplicateError) && errorMessage.delete(duplicateError)
+      if (emptyFields) errorMessage.add(emptyFieldError)
+      else errorMessage.has(emptyFieldError) && errorMessage.delete(emptyFieldError);
+      this.setState({ errorMessage })
       return false;
     }
-    if (this.duplicateComponents(components)) {
-      alert("There are duplicate salary components")
-      //choose salary component conddition is not given
-      return false;
-    }
+    this.setState({ errorMessage: errorMessage.clear() })
     return true;
+  }
+
+  errorComponent = () => {
+    const {errorMessage} = this.state;
+    return errorMessage?.size ? (
+      <div className="mt-2 mx-1 mx-md-5 text-center text-md-left">
+        {Array.from(errorMessage).map(message => (
+          <Alert variant="danger" key={message}>{message}</Alert>
+        ))}
+      </div>
+    ) : '';
   }
   save = () => {
     const designation = this.state;
@@ -140,7 +160,7 @@ class DesignationForm extends React.Component {
 
   render() {
     const { designation, show, salaryComponents } = this.props;
-
+    const { errorMessage } = this.state;
     const des = this.state;
     return (
       <Modal
@@ -168,15 +188,20 @@ class DesignationForm extends React.Component {
               </Form.Group>
               </div>
             <p style={{ color: "red" }}> {this.state.formErrors.name} </p>
-
+​
               {des.components.map((component, index) => {
                 return (
                   <Form.Row key={`${component._id}-${index}`}>
                     <Form.Group as={Col} controlId="exampleForm.SelectCustom">
                       <Form.Label>Salary Component</Form.Label>
-                      <Form.Control onChange={this.handleComponentChange.bind(this, index)} name="_id" as="select" value={component._id}>
+                      <Form.Control
+                        onChange={this.handleComponentChange.bind(this, index)}
+                        name="_id"
+                        as="select"
+                        value={component._id}
+                      >
                         <option key={-1} value={''}>Choose Component</option>
-                        {salaryComponents.data.map((c, i) => {
+                        {salaryComponents.data.map((c) => {
                           return (<option key={c._id} value={c._id}>{c.name}</option>)
                         })}
                       </Form.Control>
@@ -197,6 +222,9 @@ class DesignationForm extends React.Component {
               <Button size="sm" variant="success" onClick={this.addComponent}>Add Salary Component</Button>
             
           </Form>
+          {
+            this.errorComponent()
+          }
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.save}>{designation._id ? 'Update' : 'Create'}</Button>
