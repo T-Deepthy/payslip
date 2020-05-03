@@ -76,15 +76,8 @@ class EmployeeForm extends React.Component {
         fieldValidationErrors.designation = designationValid ? "" : "Please select designation";
         break;
       case "CTC":
-        if (!value) {
-          fieldValidationErrors.CTC = "Cannot be empty";
-        }
-        else {
-        CTCValid = value.match(/^[0-9]+$/);
-        fieldValidationErrors.CTC = CTCValid
-          ? ""
-          : " Please enter number character";
-        }
+        CTCValid = value.length > 0;
+        fieldValidationErrors.CTC = CTCValid ? "" : " Cannot be empty";
         break;
       default:
         break;
@@ -208,7 +201,7 @@ class EmployeeForm extends React.Component {
             >
               <Form.Group controlId="CTC">
                 <Form.Label>CTC</Form.Label>
-                <Form.Control onChange={this.handleInputChange} name="CTC" type="text" value={emp.CTC} placeholder="Enter employee CTC" />
+                <Form.Control onChange={this.handleInputChange} name="CTC" type="number" value={emp.CTC} placeholder="Enter employee CTC" />
               </Form.Group>
             </div>
             <p style={{ color: "red" }}> {this.state.formErrors.CTC} </p>
