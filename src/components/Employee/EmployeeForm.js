@@ -107,7 +107,7 @@ class EmployeeForm extends React.Component {
   }
   save = () => {
     const employee = this.state;
-    if (this.state.formValid) {
+    if (this.state.formValid===false) {
       if (employee._id) {
         this.props.editEmployee(employee);
       } else {

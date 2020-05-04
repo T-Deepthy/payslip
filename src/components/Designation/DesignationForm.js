@@ -3,7 +3,6 @@ import { Button, Form, Modal, Col, Alert } from 'react-bootstrap';
 import { connect } from "react-redux";
 import { getSalaryComponents } from "../../actions/salaryComponent";
 import { createDesignation, editDesignation } from '../../actions/designation';
-
 class DesignationForm extends React.Component {
   constructor(props) {
     super(props);
@@ -24,11 +23,9 @@ class DesignationForm extends React.Component {
       errorMessage: new Set()
     };
   }
-
   componentDidMount() {
     this.props.getSalaryComponents();
   }
-
   handleInputChange = e => {
     const name = e.target.name;
     const value = e.target.value;
@@ -40,10 +37,8 @@ class DesignationForm extends React.Component {
     this.setState({
       formValid:
         this.state.nameValid 
-        
     });
   }
-
   validateField(fieldName, value) {
     let fieldValidationErrors = this.state.formErrors;
     let nameValid = this.state.nameValid;
@@ -52,7 +47,6 @@ class DesignationForm extends React.Component {
         if (!value) {
           fieldValidationErrors.name = "Cannot be empty";
         }
-
         else {
           nameValid = value.match(/^([a-zA-Z]+\s)*[a-zA-Z]+$/);
           fieldValidationErrors.name = nameValid
@@ -75,7 +69,6 @@ class DesignationForm extends React.Component {
     return error.length === 0 ? "" : "has-error";
   }
   duplicateComponents = (components) => new Set(components.map(c => c._id)).size !== components.length;
-
   validSalaryComponents = (components) => {
     let totalPercentage = components.reduce(
       (accumulator, currentValue) => accumulator + +(currentValue?.percentageCTC), 0)
@@ -87,19 +80,18 @@ class DesignationForm extends React.Component {
     const emptyFields = components.some(c => !c._id || !c.percentageCTC);
     const emptyFieldError = "There are empty fields";
     if (!isHundredPercent || isDuplicateSalaryComponent || emptyFields) {
-      if (isHundredPercent) errorMessage.has(percentageError) && errorMessage.delete(percentageError)
+      if (isHundredPercent) errorMessage.delete(percentageError)
       else errorMessage.add(percentageError);
       if (isDuplicateSalaryComponent) errorMessage.add(duplicateError)
-      else errorMessage.has(duplicateError) && errorMessage.delete(duplicateError)
+      else errorMessage.delete(duplicateError)
       if (emptyFields) errorMessage.add(emptyFieldError)
-      else errorMessage.has(emptyFieldError) && errorMessage.delete(emptyFieldError);
+      else errorMessage.delete(emptyFieldError);
       this.setState({ errorMessage })
       return false;
     }
     this.setState({ errorMessage: errorMessage.clear() })
     return true;
   }
-
   errorComponent = () => {
     const {errorMessage} = this.state;
     return errorMessage?.size ? (
@@ -116,7 +108,6 @@ class DesignationForm extends React.Component {
       // alert("blank");
       return;
     }
-
     if (this.validSalaryComponents(designation.components)) {
       if (designation._id) {
         this.props.editDesignation(designation);
@@ -127,20 +118,16 @@ class DesignationForm extends React.Component {
       this.props.onHide();
     }
   }
-
-
   removeComponent = (i) => {
     const components = this.state.components;
     components.splice(i, 1)
     this.setState({ components });
   }
-
   addComponent = () => {
     const components = this.state.components;
     components.push({ _id: '', percentageCTC: '' })
     this.setState({ components });
   }
-
   handleComponentChange = (index, e) => {
     const components = this.state.components.map((c, i) => {
       if (i === index) {
@@ -152,15 +139,12 @@ class DesignationForm extends React.Component {
     })
     this.setState({ components })
   };
-
   componentWillReceiveProps(props) {
     this.setState({ ...props.designation });
     console.log("state")
   }
-
   render() {
     const { designation, show, salaryComponents } = this.props;
-    const { errorMessage } = this.state;
     const des = this.state;
     return (
       <Modal
@@ -183,12 +167,10 @@ class DesignationForm extends React.Component {
             >
             <Form.Group controlId="name">
               <Form.Label>Designation</Form.Label>
-              
               <Form.Control onChange={this.handleInputChange} name="name" type="text" value={des.name} placeholder="Enter designation " />
               </Form.Group>
               </div>
             <p style={{ color: "red" }}> {this.state.formErrors.name} </p>
-​
               {des.components.map((component, index) => {
                 return (
                   <Form.Row key={`${component._id}-${index}`}>
@@ -220,7 +202,6 @@ class DesignationForm extends React.Component {
                 )
               })}
               <Button size="sm" variant="success" onClick={this.addComponent}>Add Salary Component</Button>
-            
           </Form>
           {
             this.errorComponent()
@@ -234,14 +215,12 @@ class DesignationForm extends React.Component {
     );
   }
 }
-
 const mapStateToProps = (store) => {
   return {
     designations: store.designations,
     salaryComponents: store.salaryComponents
   };
 };
-
 export default connect(
   mapStateToProps, {
   createDesignation,
