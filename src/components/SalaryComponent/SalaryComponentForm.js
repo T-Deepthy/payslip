@@ -35,6 +35,7 @@ class SalaryComponentForm extends React.Component {
     switch (fieldName) {
       case "name":
         if (!value) {
+          nameValid = false;
           fieldValidationErrors.name = "Cannot be empty";
         }
 
@@ -61,7 +62,6 @@ class SalaryComponentForm extends React.Component {
   }
   save = () => {
     const component = this.state;
-    if (this.state.formValid) {
       if (component._id) {
         this.props.editSalaryComponent(component);
       } else {
@@ -69,7 +69,6 @@ class SalaryComponentForm extends React.Component {
         this.props.createSalaryComponent(rest);
       }
       this.props.onHide();
-    }
   }
   componentWillReceiveProps(props) {
     this.setState({ ...props.salaryComponent });
