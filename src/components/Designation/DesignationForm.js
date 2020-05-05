@@ -15,10 +15,8 @@ class DesignationForm extends React.Component {
           percentageCTC: null,
         }
       ],
-      formErrors: { name: "", salaryComponents: "", percentageCTC: '' },
+      formErrors: { name: "" },
       nameValid: false,
-      salaryComponentsValid: false,
-      percentageCTCValid: false,
       formValid: false,
       errorMessage: new Set()
     };
@@ -36,7 +34,7 @@ class DesignationForm extends React.Component {
   validateForm() {
     this.setState({
       formValid:
-        this.state.nameValid 
+        this.state.nameValid
     });
   }
   validateField(fieldName, value) {
@@ -45,6 +43,7 @@ class DesignationForm extends React.Component {
     switch (fieldName) {
       case "name":
         if (!value) {
+          nameValid = false
           fieldValidationErrors.name = "Cannot be empty";
         }
         else {
@@ -69,31 +68,32 @@ class DesignationForm extends React.Component {
     return error.length === 0 ? "" : "has-error";
   }
   duplicateComponents = (components) => new Set(components.map(c => c._id)).size !== components.length;
-  validSalaryComponents = (components) => {
-    let totalPercentage = components.reduce(
+  emptyFieldCheck = () => (this.state.components.some(c => !c._id || c.percentageCTC === '' || c.percentageCTC === '0'));
+  validSalaryComponents = () => {
+    const { errorMessage, components } = this.state;
+    const totalPercentage = components.reduce(
       (accumulator, currentValue) => accumulator + +(currentValue?.percentageCTC), 0)
-    const { errorMessage } = this.state;
     const percentageError = "Total Value of Percentage should be equal to 100";
     const duplicateError = "There are duplicate salary components";
     const isHundredPercent = +totalPercentage === 100;
     const isDuplicateSalaryComponent = this.duplicateComponents(components)
-    const emptyFields = components.some(c => !c._id || !c.percentageCTC);
+    const emptyFields = this.emptyFieldCheck() ;
     const emptyFieldError = "There are empty fields";
     if (!isHundredPercent || isDuplicateSalaryComponent || emptyFields) {
-      if (isHundredPercent) errorMessage.delete(percentageError)
-      else errorMessage.add(percentageError);
-      if (isDuplicateSalaryComponent) errorMessage.add(duplicateError)
-      else errorMessage.delete(duplicateError)
-      if (emptyFields) errorMessage.add(emptyFieldError)
-      else errorMessage.delete(emptyFieldError);
+      if (isHundredPercent) errorMessage?.has(percentageError) && errorMessage.delete(percentageError)
+      else errorMessage && errorMessage.add(percentageError);
+      if (isDuplicateSalaryComponent) errorMessage && errorMessage.add(duplicateError)
+      else errorMessage?.has(duplicateError) && errorMessage.delete(duplicateError)
+      if (emptyFields) errorMessage && errorMessage.add(emptyFieldError)
+      else errorMessage?.has(emptyFieldError) && errorMessage.delete(emptyFieldError);
       this.setState({ errorMessage })
       return false;
     }
-    this.setState({ errorMessage: errorMessage.clear() })
+    this.clearErrorMessage();
     return true;
   }
   errorComponent = () => {
-    const {errorMessage} = this.state;
+    const { errorMessage } = this.state;
     return errorMessage?.size ? (
       <div className="mt-2 mx-1 mx-md-5 text-center text-md-left">
         {Array.from(errorMessage).map(message => (
@@ -104,11 +104,7 @@ class DesignationForm extends React.Component {
   }
   save = () => {
     const designation = this.state;
-    if(!designation.name) {
-      // alert("blank");
-      return;
-    }
-    if (this.validSalaryComponents(designation.components)) {
+    if (this.validSalaryComponents()) {
       if (designation._id) {
         this.props.editDesignation(designation);
       } else {
@@ -116,6 +112,7 @@ class DesignationForm extends React.Component {
         this.props.createDesignation(rest);
       }
       this.props.onHide();
+      this.clearErrorMessage();
     }
   }
   removeComponent = (i) => {
@@ -141,7 +138,20 @@ class DesignationForm extends React.Component {
   };
   componentWillReceiveProps(props) {
     this.setState({ ...props.designation });
-    console.log("state")
+  }
+  clearErrorMessage = () => {
+    const { errorMessage } = this.state;
+    if (errorMessage?.size) {
+      errorMessage.clear();
+      this.setState({ errorMessage })
+    }
+  }
+  closeDialog = () => {
+    const { components } = this.state;
+    this.setState({ components: components.filter(c => c._id && c.percentageCTC) }, () => {
+      this.clearErrorMessage();
+      this.props.onHide();
+    })
   }
   render() {
     const { designation, show, salaryComponents } = this.props;
@@ -160,56 +170,56 @@ class DesignationForm extends React.Component {
         </Modal.Header>
         <Modal.Body>
           <Form>
-          <div
+            <div
               className={`form-group ${this.errorClass(
                 this.state.formErrors.name
               )}`}
             >
-            <Form.Group controlId="name">
-              <Form.Label>Designation</Form.Label>
-              <Form.Control onChange={this.handleInputChange} name="name" type="text" value={des.name} placeholder="Enter designation " />
+              <Form.Group controlId="name">
+                <Form.Label>Designation</Form.Label>
+                <Form.Control onChange={this.handleInputChange} name="name" type="text" value={des.name} placeholder="Enter designation " />
               </Form.Group>
-              </div>
+            </div>
             <p style={{ color: "red" }}> {this.state.formErrors.name} </p>
-              {des.components.map((component, index) => {
-                return (
-                  <Form.Row key={`${component._id}-${index}`}>
-                    <Form.Group as={Col} controlId="exampleForm.SelectCustom">
-                      <Form.Label>Salary Component</Form.Label>
-                      <Form.Control
-                        onChange={this.handleComponentChange.bind(this, index)}
-                        name="_id"
-                        as="select"
-                        value={component._id}
-                      >
-                        <option key={-1} value={''}>Choose Component</option>
-                        {salaryComponents.data.map((c) => {
-                          return (<option key={c._id} value={c._id}>{c.name}</option>)
-                        })}
-                      </Form.Control>
-                    </Form.Group>
-                    <Form.Group as={Col}>
-                      <Form.Label>Percentage</Form.Label>
-                      <Form.Control onChange={this.handleComponentChange.bind(this, index)} name="percentageCTC" type="number" value={component.percentageCTC} placeholder="Enter percentage" />
-                    </Form.Group>
-                    {' '}
-                    <Button onClick={this.removeComponent.bind(this, index)} style={{
-                      "height": "30px",
-                      "marginTop": "12px",
-                      "alignSelf": "center"
-                    }} size="sm" variant="danger">Remove</Button>{' '}
-                  </Form.Row>
-                )
-              })}
-              <Button size="sm" variant="success" onClick={this.addComponent}>Add Salary Component</Button>
+            {des.components.map((component, index) => {
+              return (
+                <Form.Row key={`${component._id}-${index}`}>
+                  <Form.Group as={Col} controlId="exampleForm.SelectCustom">
+                    <Form.Label>Salary Component</Form.Label>
+                    <Form.Control
+                      onChange={this.handleComponentChange.bind(this, index)}
+                      name="_id"
+                      as="select"
+                      value={component._id}
+                    >
+                      <option key={-1} value={''}>Choose Component</option>
+                      {salaryComponents.data.map((c) => {
+                        return (<option key={c._id} value={c._id}>{c.name}</option>)
+                      })}
+                    </Form.Control>
+                  </Form.Group>
+                  <Form.Group as={Col}>
+                    <Form.Label>Percentage</Form.Label>
+                    <Form.Control onChange={this.handleComponentChange.bind(this, index)} name="percentageCTC" type="number" value={component.percentageCTC} placeholder="Enter percentage" />
+                  </Form.Group>
+                  {' '}
+                  <Button onClick={this.removeComponent.bind(this, index)} style={{
+                    "height": "30px",
+                    "marginTop": "12px",
+                    "alignSelf": "center"
+                  }} size="sm" variant="danger">Remove</Button>{' '}
+                </Form.Row>
+              )
+            })}
+            <Button size="sm" variant="success" onClick={this.addComponent}>Add Salary Component</Button>
           </Form>
           {
             this.errorComponent()
           }
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.save}>{designation._id ? 'Update' : 'Create'}</Button>
-          <Button onClick={this.props.onHide}>Close</Button>
+          <Button disabled={!this.state.formValid} onClick={this.save}>{designation._id ? 'Update' : 'Create'}</Button>
+          <Button onClick={() => this.closeDialog()}>Close</Button>
         </Modal.Footer>
       </Modal>
     );

@@ -17,6 +17,12 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     padding: 2,
+    textAlign: "justify",
+    color: "red"
+  },
+  data: {
+    fontSize: 14,
+    padding: 2,
     textAlign: "justify"
   },
   head: {
@@ -25,15 +31,21 @@ const styles = StyleSheet.create({
     textAlign: "center",
     padding: 4
   },
+  company: {
+    fontSize: 20,
+    textAlign: "left",
+    padding: 4,
+    color: "red"
+  },
   salaryComponents: {
     fontSize: 17,
-    textDecoration: "underline",
     marginTop: 10,
   },
-  employeeDetails: {
-    fontSize: 17,
-    textDecoration: "underline",
-    marginTop: 10,
+  payslip: {
+    fontSize: 20,
+    textAlign: "right",
+    marginRight: 5,
+    padding: 3
   },
   ctc: {
     fontSize: 17,
@@ -41,8 +53,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   date: {
-    padding: 16,
+    padding: 2,
     fontSize: 14
+  },
+  hr: {
+    backgroundColor: "gray",
+    width: "120%",
+    height: "2px",
+    borderTop: "1px solid gray",
+    display: "flex"
+  },
+  headerContainer: {
+    textAlign: "right",
+    display: "inline"
   },
   respTable: {
     width: "100%",
@@ -105,21 +128,38 @@ export function PayslipPDF(props) {
       <Page size="A4" style={styles.page}>
         {props.data ?
           <View style={{ background: 'red' }}>
-            <Text style={styles.head}>Payslip</Text>
-            <Text style={styles.date}>Date: {`${year}${'-'}${month < 10 ? `0${month}` : `${month}`}${'-'}${date}`}</Text>
-            <Text style={styles.employeeDetails}>Employee Details</Text>
-            <Text style={styles.text}>Employee Name: {props.data.empName}</Text>
-            <Text style={styles.text}>Employee Number: {props.data.empNo}</Text>
+            <View style={styles.headerContainer}>
+              <Text style={styles.payslip}>PAYSLIP</Text>
+
+              <Text style={styles.company}>COMPANY NAME</Text>
+              <Text style={styles.text}>Address : </Text>
+              <Text style={styles.text}>Phone :</Text>
+              <Text style={styles.text}>Fax :</Text>
+              <Text style={styles.text}>Email :</Text>
+
+            </View>
+            <Text style={styles.hr} />
+            <View style={styles.employee}>
+              <Text style={styles.date}>Date: {`${year}${'-'}${month < 10 ? `0${month}` : `${month}`}${'-'}${date}`}</Text>
+              <Text style={styles.text}>Employee Name: </Text>
+              <Text style={styles.data}>{props.data.empName}</Text>
+              <Text style={styles.text}>Employee Number: </Text>
+              <Text style={styles.data}>{props.data.empNo}</Text>
+            </View>
             <Text style={styles.salaryComponents}>Salary Components</Text>
             {props.data.salaryComponents.map((components, i) => {
-              return <Text style={styles.text}>{components.name}: {components.value}/-</Text>
+              return <Text key ={i} style={styles.text}>{components.name}: {components.value}/-</Text>
             })}
             <Text style={styles.ctc}>CTC</Text>
-            <Text style={styles.text}>Mothly CTC: {props.data.CTC}/-</Text>
-            <Text style={styles.text}>Yearly CTC: {props.data.CTC * 12}/-</Text>
+            <Text style={styles.text}>Mothly CTC: </Text>
+            <Text style={styles.data}>{props.data.CTC}/-</Text>
+            <Text style={styles.text}>Yearly CTC: </Text>
+            <Text style={styles.data}>{props.data.CTC * 12}/-</Text>
+            <Text style={styles.date}>Date: </Text>
+            <Text style={styles.date}>Signature: </Text>
           </View>
           : null}
       </Page>
-    </Document>
+    </Document >
   );
 }

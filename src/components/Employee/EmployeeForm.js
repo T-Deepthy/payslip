@@ -44,32 +44,31 @@ class EmployeeForm extends React.Component {
     switch (fieldName) {
       case "empName":
         if (!value) {
+          empNameValid =false;
           fieldValidationErrors.empName = "Cannot be empty";
         }
-
         else {
           empNameValid = value.match(/^([a-zA-Z]+\s)*[a-zA-Z]+$/);
           fieldValidationErrors.empName = empNameValid
             ? ""
-            : " Employee Name must be alphabet";
+            : "Employee Name must be alphabet";
         }
         break;
       case "empNo":
-        empNoValid = value.match(/^[a-zA-Z0-9]+$/);
         if (!value) {
+          empNoValid = false;
           fieldValidationErrors.empNo = "Cannot be empty";
         }
-
         else {
           empNoValid = value.match(/^[a-zA-Z0-9]+$/);
           fieldValidationErrors.empNo = empNoValid
             ? ""
-            : " Employee Number should not contain special characters";
+            : "Employee Number should not contain special characters";
         }
         break;
       case "address":
         addressValid = value.length > 0;
-        fieldValidationErrors.address = addressValid ? "" : " Cannot be empty";
+        fieldValidationErrors.address = addressValid ? "" : " Required!";
         break;
       case "designation":
         designationValid = value.length > 0;
@@ -77,7 +76,7 @@ class EmployeeForm extends React.Component {
         break;
       case "CTC":
         CTCValid = value.length > 0;
-        fieldValidationErrors.CTC = CTCValid ? "" : " Cannot be empty";
+        fieldValidationErrors.CTC = CTCValid ? "" : " Required!";
         break;
       default:
         break;
@@ -107,7 +106,6 @@ class EmployeeForm extends React.Component {
   }
   save = () => {
     const employee = this.state;
-    if (this.state.formValid===false) {
       if (employee._id) {
         this.props.editEmployee(employee);
       } else {
@@ -115,7 +113,6 @@ class EmployeeForm extends React.Component {
         this.props.createEmployee(rest);
       }
       this.props.onHide();
-    }
   }
   componentWillReceiveProps(props) {
     console.log(this.state)
@@ -136,7 +133,7 @@ class EmployeeForm extends React.Component {
       >
         <Modal.Header  >
           <Modal.Title id="contained-modal-title-vcenter">
-            {`${employee._id ? 'Edit ' : 'Create '} Salary Component`}
+            {`${employee._id ? 'Edit ' : 'Create '} Employee`}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -208,7 +205,7 @@ class EmployeeForm extends React.Component {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.save}>{employee._id ? 'Update' : 'Create'}</Button>
+          <Button disabled={!this.state.formValid} onClick={this.save}>{employee._id ? 'Update' : 'Create'}</Button>
           <Button onClick={this.props.onHide}>Close</Button>
         </Modal.Footer>
       </Modal>

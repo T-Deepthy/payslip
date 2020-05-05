@@ -38,7 +38,6 @@ class SalaryComponentForm extends React.Component {
           nameValid = false;
           fieldValidationErrors.name = "Cannot be empty";
         }
-
         else {
           nameValid = value.match(/^([a-zA-Z]+\s)*[a-zA-Z]+$/);
           fieldValidationErrors.name = nameValid
@@ -109,7 +108,7 @@ class SalaryComponentForm extends React.Component {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.save}>{salaryComponent._id ? 'Update' : 'Create'}</Button>
+          <Button disabled={!this.state.formValid} onClick={this.save}>{salaryComponent._id ? 'Update' : 'Create'}</Button>
           <Button onClick={this.props.onHide}>Close</Button>
         </Modal.Footer>
       </Modal>
