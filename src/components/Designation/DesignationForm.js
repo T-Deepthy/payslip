@@ -50,7 +50,7 @@ class DesignationForm extends React.Component {
           nameValid = value.match(/^([a-zA-Z]+\s)*[a-zA-Z]+$/);
           fieldValidationErrors.name = nameValid
             ? ""
-            : " Salary Component Name must be alphabet";
+            : " Designation Name must be alphabet";
         }
         break;
       default:

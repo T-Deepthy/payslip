@@ -20,7 +20,7 @@ class EmployeeForm extends React.Component {
       addressValid: false,
       designationValid: false,
       CTCValid: false,
-      formValid: false
+      formValid: true
     };
   }
 
@@ -205,7 +205,7 @@ class EmployeeForm extends React.Component {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button disabled={!this.state.formValid} onClick={this.save}>{employee._id ? 'Update' : 'Create'}</Button>
+          <Button disabled={this.state.formValid} onClick={this.save}>{employee._id ? 'Update' : 'Create'}</Button>
           <Button onClick={this.props.onHide}>Close</Button>
         </Modal.Footer>
       </Modal>
