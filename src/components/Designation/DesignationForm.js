@@ -178,6 +178,7 @@ class DesignationForm extends React.Component {
               <Form.Group controlId="name">
                 <Form.Label>Designation</Form.Label>
                 <Form.Control onChange={this.handleInputChange} name="name" type="text" value={des.name} placeholder="Enter designation " />
+              <p style={{color: "orange"}}>*accepts space between words</p>
               </Form.Group>
             </div>
             <p style={{ color: "red" }}> {this.state.formErrors.name} </p>

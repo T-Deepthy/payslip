@@ -20,7 +20,7 @@ class EmployeeForm extends React.Component {
       addressValid: false,
       designationValid: false,
       CTCValid: false,
-      formValid: true
+      formValid: false
     };
   }
 
@@ -44,7 +44,6 @@ class EmployeeForm extends React.Component {
     switch (fieldName) {
       case "empName":
         if (!value) {
-          empNameValid =false;
           fieldValidationErrors.empName = "Cannot be empty";
         }
         else {
@@ -56,7 +55,6 @@ class EmployeeForm extends React.Component {
         break;
       case "empNo":
         if (!value) {
-          empNoValid = false;
           fieldValidationErrors.empNo = "Cannot be empty";
         }
         else {
@@ -76,6 +74,7 @@ class EmployeeForm extends React.Component {
         break;
       case "CTC":
         CTCValid = value.length > 0;
+        console.log("ctc", CTCValid)
         fieldValidationErrors.CTC = CTCValid ? "" : " Required!";
         break;
       default:
@@ -103,6 +102,7 @@ class EmployeeForm extends React.Component {
         this.state.designationValid &&
         this.state.CTCValid
     });
+    
   }
   save = () => {
     const employee = this.state;
@@ -205,7 +205,7 @@ class EmployeeForm extends React.Component {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button disabled={this.state.formValid} onClick={this.save}>{employee._id ? 'Update' : 'Create'}</Button>
+          <Button disabled={!this.state.formValid} onClick={this.save}>{employee._id ? 'Update' : 'Create'}</Button>
           <Button onClick={this.props.onHide}>Close</Button>
         </Modal.Footer>
       </Modal>
