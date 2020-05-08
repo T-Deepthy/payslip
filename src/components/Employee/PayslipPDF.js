@@ -169,7 +169,6 @@ export function PayslipPDF(props) {
               <Text style={styles.text}>Phone :</Text>
               <Text style={styles.text}>Fax :</Text>
               <Text style={styles.text}>Email :</Text>
-
             </View>
             <Text style={styles.hr} />
             <View style={styles.employee}>
