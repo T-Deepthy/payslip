@@ -5,7 +5,6 @@ import Axios from "axios";
 import { PayslipPDF } from "./PayslipPDF";
 import { API } from "../../actions/config"
 import { PDFDownloadLink } from "@react-pdf/renderer";
-
 import { connect } from "react-redux";
 import { Spin } from "antd";
 import { Button, Modal } from "react-bootstrap"
@@ -25,6 +24,7 @@ class EmployeeList extends Component {
     this.state = {
       showEmployeeForm: false,
       isDeleteModalOpen: false,
+      showPopup: false,
       currentEmployee: initialState,
       payslip: []
     };
@@ -36,7 +36,7 @@ class EmployeeList extends Component {
     this.props.getEmployees();
   }
 
- 
+
 
   toggleEmployeeForm = (show) => {
     this.setState({
@@ -50,7 +50,7 @@ class EmployeeList extends Component {
     })
   }
   deleteEmployee = () => {
-    const {currentEmployee} = this.state;
+    const { currentEmployee } = this.state;
     this.props.deleteEmployee(currentEmployee);
     this.closeDeleteDialog();
   }
@@ -63,9 +63,14 @@ class EmployeeList extends Component {
   }
 
   closeDeleteDialog = () => {
-    this.setState({isDeleteModalOpen: false});
+    this.setState({ isDeleteModalOpen: false });
   }
-
+  handleShow = () => {
+    this.setState({ showPopup: true });
+  }
+  handleClose = () => {
+    this.setState({ showPopup: false });
+  }
   generatePDF = async (employee, index) => {
     const employeePayslip = await Axios.get(`${API}employees/${employee._id}/payslip`)
     const { payslip } = this.state;
@@ -73,9 +78,11 @@ class EmployeeList extends Component {
     this.setState({
       payslip
     })
+    console.log("payslip", this.state.payslip)
   }
 
   showValues() {
+    const { showPopup } = this.state;
     return this.props.employees.data.map((item, index) => (
       <tr key={item._id}>
         <td>{item.empNo}</td>
@@ -92,25 +99,58 @@ class EmployeeList extends Component {
             variant="danger" className="mr-2 pull-right"
             onClick={() => this.openDeleteDialog(item)}
           >Delete</Button>
-          <Button
-            variant="secondary" className="mr-2 pull-right"
-            onClick={this.generatePDF.bind(this, item, index)}
-          >Generate Payslip</Button>
-          {this.state.payslip[index] ?
-            <PDFDownloadLink
-              document={<PayslipPDF data={this.state.payslip[index]} />}
-              fileName="payslip.pdf"
-              style={{
-                textDecoration: "none",
-                padding: "10px",
-                color: "#4a4a4a",
-                backgroundColor: "#f2f2f2",
-                border: "1px solid #4a4a4a"
-              }}
-            >
-              Download Payslip
+          <Button variant="info" onClick={() => this.handleShow()}>
+            View Payslip
+        </Button>
+
+          <Modal show={showPopup} onHide={() => this.handleClose()} size="lg">
+            <Modal.Header closeButton>
+              <Modal.Title>Payslip Record</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Button
+                variant="secondary" className="mb-2"
+                onClick={this.generatePDF.bind(this, item, index)}
+              >Generate Payslip</Button>
+              {this.state.payslip.map(p => {
+                return (
+                  <div>
+                    <p>Employee Name: {p.empName}</p>
+                    <p>Employee Number: {p.empNo}</p>
+                    <p>Designation: {p.designation}</p>
+                    <p>Salary components</p>
+                    {p.salaryComponents.map((components, i) => {
+                      return <p key={i} >{components.name}: {components.value}/-</p>
+                    })}
+                    <p>Monthly CTC: {p.CTC}</p>
+                    <p>Yearly CTC: {p.CTC*12}</p>
+
+                  </div>
+                )
+              })}
+
+            </Modal.Body>
+            <Modal.Footer>
+
+              {this.state.payslip[index] ?
+                <PDFDownloadLink
+                  document={<PayslipPDF data={this.state.payslip[index]} />}
+                  fileName="payslip.pdf"
+                  style={{
+                    textDecoration: "none",
+                    padding: "10px",
+                    color: "#4a4a4a",
+                    backgroundColor: "#f2f2f2",
+                    border: "1px solid #4a4a4a"
+                  }}
+                >
+                  Download Payslip
           </PDFDownloadLink>
-            : ""}
+                : ""}
+            </Modal.Footer>
+          </Modal>
+
+
         </td>
       </tr>
     ));
@@ -122,7 +162,7 @@ class EmployeeList extends Component {
         <Spin />
       );
     } else {
-      const {isDeleteModalOpen} = this.state;
+      const { isDeleteModalOpen } = this.state;
       return (
         <div>
           <Button variant="success" className="mb-2"

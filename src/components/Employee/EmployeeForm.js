@@ -191,6 +191,18 @@ class EmployeeForm extends React.Component {
               </Form.Row>
             </div>
             <p style={{ color: "red" }}> {this.state.formErrors.designation} </p>
+            {/* <Form.Row key={this.props.employee.designation._id}>
+            <Form.Group as={Col} controlId="exampleForm.SelectCustom">
+                  <Form.Label>Job Status</Form.Label>
+                  <Form.Control onChange={this.handleInputChange} name="jobStatus" as="select" value={this.state.jobStatus}>
+                    <option key={-1} value={''}>Choose Job Status</option>
+                      <option >Full Time</option>
+                      <option >Part Time</option>
+                      <option >Casual</option>
+                  </Form.Control>
+                </Form.Group>
+              </Form.Row> */}
+
             <div
               className={`form-group ${this.errorClass(
                 this.state.formErrors.CTC

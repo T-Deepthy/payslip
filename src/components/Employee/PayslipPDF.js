@@ -111,6 +111,39 @@ const styles = StyleSheet.create({
     textAlign: "justify",
     borderBottom: "1px solid black",
   },
+  tableCell: {
+    margin: "auto",
+    margin: 5,
+    fontSize: 10
+  },
+  tableRow: {
+    margin: "auto",
+    flexDirection: "row"
+  },
+  tableCellHeader: {
+    margin: "auto",
+    margin: 5,
+    fontSize: 12,
+    fontWeight: 500
+  },
+  tableCol: {
+    width: "25%",
+    borderStyle: "solid",
+    borderColor: '#bfbfbf',
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0
+  },
+  table: {
+        display: "table",
+        width: "auto",
+        borderStyle: "solid",
+        borderColor: '#bfbfbf',
+        borderWidth: 1,
+        borderRightWidth: 0,
+        borderBottomWidth: 0
+      },
+   
 
 });
 
@@ -157,6 +190,68 @@ export function PayslipPDF(props) {
             <Text style={styles.data}>{props.data.CTC * 12}/-</Text>
             <Text style={styles.date}>Date: </Text>
             <Text style={styles.date}>Signature: </Text>
+
+            <View style={styles.table}>
+            <View style={styles.tableRow}>
+              <View style={styles.tableColHeader}>
+                <Text style={styles.tableCellHeader}>Employee No</Text>
+              </View>
+              <View style={styles.tableColHeader}>
+                <Text style={styles.tableCellHeader}>Employee Name</Text>
+              </View>
+              <View style={styles.tableColHeader}>
+                <Text style={styles.tableCellHeader}>Address</Text>
+              </View>
+              <View style={styles.tableColHeader}>
+                <Text style={styles.tableCellHeader}>Designation</Text>
+              </View>
+              <View style={styles.tableColHeader}>
+                <Text style={styles.tableCellHeader}>CTC</Text>
+              </View>
+            </View>
+            <View style={styles.tableRow}>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>{props.data.empNo}</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>{props.data.empName}</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>{props.data.address}</Text>
+              </View>
+              <View style={styles.tableCol}>
+                {props.data.salaryComponents.map((components, i) => {
+                  return <Text key ={i} style={styles.tableCell}>{components.name}: {components.value}/-</Text>
+                })}
+              </View>
+            </View>
+            <View style={styles.tableRow}>
+              <View style={styles.tableColHeader}>
+                <Text style={styles.tableCellHeader}>Monthly CTC:</Text>
+              </View>
+              <View style={styles.tableColHeader}>
+                <Text style={styles.tableCellHeader}>{props.data.CTC}/-</Text>
+              </View>
+            </View>
+            <View style={styles.tableRow}>
+              <View style={styles.tableColHeader}>
+                <Text style={styles.tableCellHeader}>Yearly CTC:</Text>
+              </View>
+              <View style={styles.tableColHeader}>
+                <Text style={styles.tableCellHeader}>{props.data.CTC *12}/-</Text>
+              </View>
+            </View>
+
+            <View style={styles.tableRow}>
+              <View style={styles.tableColHeader}>
+                <Text style={styles.tableCell}>Date: {`${year}${'-'}${month < 10 ? `0${month}` : `${month}`}${'-'}${date}`}</Text>
+              </View>
+              <View style={styles.tableColHeader}>
+                <Text style={styles.tableCell}>Signature</Text>
+              </View>
+            </View>
+
+          </View> 
           </View>
           : null}
       </Page>
@@ -334,67 +429,69 @@ export function PayslipPDF(props) {
 //     <Document>
 //       <Page size="A4" style={styles.page}>
 //         {props.data ?
-//           ( <View style={styles.table}>
-//             <View style={styles.tableRow}>
-//               <View style={styles.tableColHeader}>
-//                 <Text style={styles.tableCellHeader}>Employee No</Text>
-//               </View>
-//               <View style={styles.tableColHeader}>
-//                 <Text style={styles.tableCellHeader}>Employee Name</Text>
-//               </View>
-//               <View style={styles.tableColHeader}>
-//                 <Text style={styles.tableCellHeader}>Address</Text>
-//               </View>
-//               <View style={styles.tableColHeader}>
-//                 <Text style={styles.tableCellHeader}>Designation</Text>
-//               </View>
-//               <View style={styles.tableColHeader}>
-//                 <Text style={styles.tableCellHeader}>CTC</Text>
-//               </View>
-//             </View>
-//             <View style={styles.tableRow}>
-//               <View style={styles.tableCol}>
-//                 <Text style={styles.tableCell}>{props.data.empNo}</Text>
-//               </View>
-//               <View style={styles.tableCol}>
-//                 <Text style={styles.tableCell}>{props.data.empName}</Text>
-//               </View>
-//               <View style={styles.tableCol}>
-//                 <Text style={styles.tableCell}>{props.data.address}</Text>
-//               </View>
-//               <View style={styles.tableCol}>
-//                 {props.data.salaryComponents.map((components, i) => {
-//                   return <Text key ={i} style={styles.tableCell}>{components.name}: {components.value}/-</Text>
-//                 })}
-//               </View>
-//             </View>
-//             <View style={styles.tableRow}>
-//               <View style={styles.tableColHeader}>
-//                 <Text style={styles.tableCellHeader}>Monthly CTC:</Text>
-//               </View>
-//               <View style={styles.tableColHeader}>
-//                 <Text style={styles.tableCellHeader}>{props.data.CTC}/-</Text>
-//               </View>
-//             </View>
-//             <View style={styles.tableRow}>
-//               <View style={styles.tableColHeader}>
-//                 <Text style={styles.tableCellHeader}>Yearly CTC:</Text>
-//               </View>
-//               <View style={styles.tableColHeader}>
-//                 <Text style={styles.tableCellHeader}>{props.data.CTC *12}/-</Text>
-//               </View>
-//             </View>
+          // (
+          //    <View style={styles.table}>
+          //   <View style={styles.tableRow}>
+          //     <View style={styles.tableColHeader}>
+          //       <Text style={styles.tableCellHeader}>Employee No</Text>
+          //     </View>
+          //     <View style={styles.tableColHeader}>
+          //       <Text style={styles.tableCellHeader}>Employee Name</Text>
+          //     </View>
+          //     <View style={styles.tableColHeader}>
+          //       <Text style={styles.tableCellHeader}>Address</Text>
+          //     </View>
+          //     <View style={styles.tableColHeader}>
+          //       <Text style={styles.tableCellHeader}>Designation</Text>
+          //     </View>
+          //     <View style={styles.tableColHeader}>
+          //       <Text style={styles.tableCellHeader}>CTC</Text>
+          //     </View>
+          //   </View>
+          //   <View style={styles.tableRow}>
+          //     <View style={styles.tableCol}>
+          //       <Text style={styles.tableCell}>{props.data.empNo}</Text>
+          //     </View>
+          //     <View style={styles.tableCol}>
+          //       <Text style={styles.tableCell}>{props.data.empName}</Text>
+          //     </View>
+          //     <View style={styles.tableCol}>
+          //       <Text style={styles.tableCell}>{props.data.address}</Text>
+          //     </View>
+          //     <View style={styles.tableCol}>
+          //       {props.data.salaryComponents.map((components, i) => {
+          //         return <Text key ={i} style={styles.tableCell}>{components.name}: {components.value}/-</Text>
+          //       })}
+          //     </View>
+          //   </View>
+          //   <View style={styles.tableRow}>
+          //     <View style={styles.tableColHeader}>
+          //       <Text style={styles.tableCellHeader}>Monthly CTC:</Text>
+          //     </View>
+          //     <View style={styles.tableColHeader}>
+          //       <Text style={styles.tableCellHeader}>{props.data.CTC}/-</Text>
+          //     </View>
+          //   </View>
+          //   <View style={styles.tableRow}>
+          //     <View style={styles.tableColHeader}>
+          //       <Text style={styles.tableCellHeader}>Yearly CTC:</Text>
+          //     </View>
+          //     <View style={styles.tableColHeader}>
+          //       <Text style={styles.tableCellHeader}>{props.data.CTC *12}/-</Text>
+          //     </View>
+          //   </View>
 
-//             <View style={styles.tableRow}>
-//               <View style={styles.tableColHeader}>
-//                 <Text style={styles.tableCell}>Date: {`${year}${'-'}${month < 10 ? `0${month}` : `${month}`}${'-'}${date}`}</Text>
-//               </View>
-//               <View style={styles.tableColHeader}>
-//                 <Text style={styles.tableCell}>Signature</Text>
-//               </View>
-//             </View>
+          //   <View style={styles.tableRow}>
+          //     <View style={styles.tableColHeader}>
+          //       <Text style={styles.tableCell}>Date: {`${year}${'-'}${month < 10 ? `0${month}` : `${month}`}${'-'}${date}`}</Text>
+          //     </View>
+          //     <View style={styles.tableColHeader}>
+          //       <Text style={styles.tableCell}>Signature</Text>
+          //     </View>
+          //   </View>
 
-//           </View> ) : null}
+          // </View> 
+          // ) : null}
 //       </Page>
 //     </Document >
 //   );
